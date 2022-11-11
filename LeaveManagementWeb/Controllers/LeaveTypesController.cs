@@ -19,6 +19,7 @@ namespace LeaveManagementWeb.Controllers
     {
         //private readonly ApplicationDbContext _context;
         private readonly IMapper mapper;
+        private readonly ILeaveAllocationRepository leaveAllocationRepository;
         private readonly ILeaveTypeRepository leaveTypeRepository;
 
         //This is direct calling DB Context
@@ -28,9 +29,10 @@ namespace LeaveManagementWeb.Controllers
         //    this.mapper = mapper;
         //}
 
-        public LeaveTypesController(ILeaveTypeRepository leaveTypeRepository , IMapper mapper)
+        public LeaveTypesController(ILeaveTypeRepository leaveTypeRepository , IMapper mapper, ILeaveAllocationRepository leaveAllocationRepository)
         {
             this.mapper = mapper;
+            this.leaveAllocationRepository = leaveAllocationRepository;
             this.leaveTypeRepository = leaveTypeRepository;
         }
 
@@ -166,5 +168,13 @@ namespace LeaveManagementWeb.Controllers
 
         //  //return _context.LeaveTypes.Any(e => e.Id == id);
         //}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AllocateLeave(int id)
+        {
+            await leaveAllocationRepository.LeaveAllocation(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
